@@ -1,5 +1,4 @@
 ﻿#ifndef PARSER_H
-#define PARSER_H
 
 #include <iostream>
 #include <fstream>
@@ -32,8 +31,6 @@ public:
         }
 
         file.close();
-
-	
         return records;
     }
 
@@ -59,10 +56,10 @@ private:
         if (viaPos != std::string::npos) {
             nextHop = nextHop.substr(viaPos + 4);
         }
+        
 
-        // Create and return a RoutingRecord object using the constructor
         return RoutingRecord(lifeTime, prefixAddress, prefixMask, nextHop);
     }
 };
 
-#endif // PARSER_H
+#endif

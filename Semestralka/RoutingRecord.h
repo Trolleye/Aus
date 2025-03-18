@@ -9,7 +9,7 @@ private:
 	std::string nextHop;
 	int lifeTimeSec;
 public:
-	bool matchWithAddress();
+	bool matchWithAddress(std::string& address, int mask);
 	bool matchLifeTime(std::string& fromTime, std::string& toTime);
 	bool matchNextHop(std::string& paNextHop);
 	std::string getInfo();
@@ -39,7 +39,7 @@ RoutingRecord::RoutingRecord(std::string lifeTime, std::string prefixAddress, st
 
 
 
-bool RoutingRecord::matchWithAddress()
+bool RoutingRecord::matchWithAddress(std::string& address, int mask)
 {
 	return false;
 }
