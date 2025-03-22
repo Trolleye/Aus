@@ -138,6 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Filter.h" />
+    <ClInclude Include="FilteringOptions.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="RoutingRecord.h" />
   </ItemGroup>

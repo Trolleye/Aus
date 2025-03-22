@@ -1,6 +1,9 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <bitset>
+#include <array>
 class RoutingRecord{
 private:
 	std::string lifeTime;
@@ -8,12 +11,14 @@ private:
 	std::string prefixMask;
 	std::string nextHop;
 	int lifeTimeSec;
+	int prefixMaskInt;
+	int toSec(std::string& paLifeTime);
+	std::array<int, 32> toBinary(const std::string& paAddress);
 public:
-	bool matchWithAddress(std::string& address, int mask);
+	bool matchWithAddress(std::string& paAdress);
 	bool matchLifeTime(std::string& fromTime, std::string& toTime);
 	bool matchNextHop(std::string& paNextHop);
 	std::string getInfo();
-	int toSec(std::string& paLifeTime);
 	RoutingRecord();
 	RoutingRecord(std::string lifeTime, std::string prefixAddress, std::string prefixMask, std::string nextHop);
 };
@@ -25,6 +30,7 @@ RoutingRecord::RoutingRecord()
 	this->prefixAddress = "";
 	this->prefixMask = "";
 	this->nextHop = "";
+	this->prefixMaskInt = 0;
 }
 
 
@@ -35,13 +41,31 @@ RoutingRecord::RoutingRecord(std::string lifeTime, std::string prefixAddress, st
 	this->prefixAddress = prefixAddress;
 	this->prefixMask = prefixMask;
 	this->nextHop = nextHop;
+	if (prefixMask == "") {
+		this->prefixMaskInt = 0;
+	}
+	else {
+		this->prefixMaskInt = std::stoi(prefixMask);
+	}
 }
 
 
 
-bool RoutingRecord::matchWithAddress(std::string& address, int mask)
+bool RoutingRecord::matchWithAddress(std::string& paAddress)
 {
-	return false;
+	if (this->prefixMaskInt == 0) {
+		return false;
+	}
+	
+	std::array<int, 32> myAddress = this->toBinary(this->prefixAddress);
+	std::array<int, 32> otherAddress = this->toBinary(paAddress);
+
+	for (int i = 0; i < this->prefixMaskInt; i++) {
+		if (myAddress[i] != otherAddress[i]) {
+			return false;
+		}
+	}
+	return true;
 }
 
 bool RoutingRecord::matchLifeTime(std::string& fromTime, std::string& toTime)
@@ -53,6 +77,8 @@ bool RoutingRecord::matchLifeTime(std::string& fromTime, std::string& toTime)
 	return false;
 }
 
+
+
 bool RoutingRecord::matchNextHop(std::string& paNextHop)
 {
 	return paNextHop == this->nextHop;
@@ -62,6 +88,7 @@ std::string RoutingRecord::getInfo()
 {
 	return "LifeTime: " + this->lifeTime + " Prefix Address: " + this->prefixAddress + " Prefix Mask: " + this->prefixMask + " Next Hop: " + this->nextHop;
 }
+
 
 int RoutingRecord::toSec(std::string& paLifeTime)
 {
@@ -107,4 +134,22 @@ int RoutingRecord::toSec(std::string& paLifeTime)
 	}
 
 	return sec;
+}
+
+
+std::array<int, 32> RoutingRecord::toBinary(const std::string& paAddress) {
+	std::array<int, 32> bitArray{};
+	std::stringstream ss(paAddress);
+	std::string segment;
+	int index = 0;
+
+	while (std::getline(ss, segment, '.')) {
+		int octet = std::stoi(segment);
+		std::bitset<8> bits(octet);
+		for (int i = 7; i >= 0; --i) {
+			bitArray[index++] = bits[i];
+		}
+	}
+
+	return bitArray;
 }
