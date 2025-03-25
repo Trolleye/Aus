@@ -91,11 +91,13 @@ bool isValidTime(const std::string& time) {
     }
 }
 
+
 FilteringOptions promptUser() {
 	FilteringOptions filterOptions;
 	int userChoice;
 	bool validChoice = false;
 
+    int userMask;
 	std::string userNextHop;
 	std::string userAddress;
 	std::string userFromTime;
@@ -131,12 +133,19 @@ FilteringOptions promptUser() {
             case 2:
                 std::cout << "Enter address: ";
                 std::cin >> userAddress;
+                std::cout << "Enter mask (0-32): ";
+                while (!(std::cin >> userMask) || userMask < 0 || userMask > 32) {
+                    std::cout << "Invalid mask. Please enter a number between 0 and 32: ";
+                    std::cin.clear();
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  
+                }
                 if (!isValidIP(userAddress)) {
                     std::cout << "Invalid IP address. Please try again." << std::endl;
                 }
                 else {
                     filterOptions.setUserChoice(userChoice);
                     filterOptions.setAddress(userAddress);
+                    filterOptions.setMask(userMask);
                     validChoice = true;
                 }
                 break;
@@ -174,14 +183,14 @@ int main() {
     while (continueFiltering) {
         FilteringOptions options = promptUser();
 
-
+        int userMask = options.getMask();
         std::string userNextHop = options.getNextHop();
         std::string userAddress = options.getAddress();
         std::string userFromTime = options.getFromTime();
         std::string userToTime = options.getToTime();
 
         auto matchNextHopPred = [&](RoutingRecord& record) { return record.matchNextHop(userNextHop); };
-        auto matchWithAddressPred = [&](RoutingRecord& record) {return record.matchWithAddress(userAddress); };
+        auto matchWithAddressPred = [&](RoutingRecord& record) {return record.matchWithAddress(userAddress, userMask); };
         auto matchLifetimePred = [&](RoutingRecord& record) {return record.matchLifeTime(userFromTime, userToTime); };
 
         std::vector<RoutingRecord> filteredRecords;
@@ -215,6 +224,7 @@ int main() {
 
         if (response == 'n' || response == 'N') {
             continueFiltering = false;
+            break;
         }
         std::cout << std::endl;
 

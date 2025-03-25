@@ -2,13 +2,14 @@
 class FilteringOptions {
 private:
 	int userChoice;
+	int userMask;
 	std::string nextHop;
 	std::string address;
 	std::string fromTime;
 	std::string toTime;
 public:
-	FilteringOptions() : userChoice(0), nextHop(""), address(""), fromTime(""), toTime("") {}
-	FilteringOptions(int userChoice, const std::string& nextHop, const std::string& address, const std::string& fromTime, const std::string& toTime) : userChoice(userChoice), nextHop(nextHop), address(address), fromTime(fromTime), toTime(toTime) {}
+	FilteringOptions() : userChoice(0), userMask(0), nextHop(""), address(""), fromTime(""), toTime("") {}
+	FilteringOptions(int userChoice, int userMask,const std::string& nextHop, const std::string& address, const std::string& fromTime, const std::string& toTime) : userChoice(userChoice), userMask(userMask), nextHop(nextHop), address(address), fromTime(fromTime), toTime(toTime) {}
 	int getUserChoice() const {
 		return userChoice;
 	}
@@ -23,6 +24,12 @@ public:
 	}
 	std::string getToTime() const {
 		return toTime;
+	}
+	int getMask() const {
+		return this->userMask;
+	}
+	void setMask(int mask) {
+		this->userMask = mask;
 	}
 	void setUserChoice(int userChoice) {
 		this->userChoice = userChoice;

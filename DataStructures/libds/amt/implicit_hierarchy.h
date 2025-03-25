@@ -80,7 +80,7 @@ namespace ds::amt {
 	template<typename DataType, size_t K>
 	size_t ImplicitHierarchy<DataType, K>::level(size_t index) const
 	{
-		return std::floor(std::log( ( K - 1 ) * ( index + 1 ) ) / std::log(K))
+		return std::floor(std::log((K - 1) * (index + 1)) / std::log(K));
 	}
 
 	template<typename DataType, size_t K>

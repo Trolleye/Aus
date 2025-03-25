@@ -15,7 +15,7 @@ private:
 	int toSec(std::string& paLifeTime);
 	std::array<int, 32> toBinary(const std::string& paAddress);
 public:
-	bool matchWithAddress(std::string& paAdress);
+	bool matchWithAddress(std::string& paAdress, int& paMask);
 	bool matchLifeTime(std::string& fromTime, std::string& toTime);
 	bool matchNextHop(std::string& paNextHop);
 	std::string getInfo();
@@ -51,16 +51,16 @@ RoutingRecord::RoutingRecord(std::string lifeTime, std::string prefixAddress, st
 
 
 
-bool RoutingRecord::matchWithAddress(std::string& paAddress)
+bool RoutingRecord::matchWithAddress(std::string& paAddress, int& paMask)
 {
-	if (this->prefixMaskInt == 0) {
+	if (paMask == 0) {
 		return false;
 	}
 	
 	std::array<int, 32> myAddress = this->toBinary(this->prefixAddress);
 	std::array<int, 32> otherAddress = this->toBinary(paAddress);
 
-	for (int i = 0; i < this->prefixMaskInt; i++) {
+	for (int i = 0; i < paMask; i++) {
 		if (myAddress[i] != otherAddress[i]) {
 			return false;
 		}
