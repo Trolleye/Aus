@@ -162,13 +162,13 @@ namespace ds::amt {
 		void removeSon(BlockType& parent, size_t sonOrder) override;
 
 		BlockType* accessLeftSon(const BlockType& node) const;
-        BlockType* accessRightSon(const BlockType& node) const;
+		BlockType* accessRightSon(const BlockType& node) const;
 
-        bool isLeftSon(const BlockType& node) const;
-        bool isRightSon(const BlockType& node) const;
+		bool isLeftSon(const BlockType& node) const;
+		bool isRightSon(const BlockType& node) const;
 
-        bool hasLeftSon(const BlockType& node) const;
-        bool hasRightSon(const BlockType& node) const;
+		bool hasLeftSon(const BlockType& node) const;
+		bool hasRightSon(const BlockType& node) const;
 
 		BlockType& insertLeftSon(BlockType& parent);
 		BlockType& insertRightSon(BlockType& parent);
@@ -186,42 +186,42 @@ namespace ds::amt {
 	//----------
 
 	template<typename BlockType>
-    ExplicitHierarchy<BlockType>::ExplicitHierarchy() :
+	ExplicitHierarchy<BlockType>::ExplicitHierarchy() :
 		root_(nullptr)
 	{
 	}
 
 	template<typename BlockType>
-    ExplicitHierarchy<BlockType>::ExplicitHierarchy(const ExplicitHierarchy& other) :
+	ExplicitHierarchy<BlockType>::ExplicitHierarchy(const ExplicitHierarchy& other) :
 		ExplicitHierarchy()
 	{
 		this->assign(other);
 	}
 
-    template<typename BlockType>
-    AMT& ExplicitHierarchy<BlockType>::assign(const AMT& other)
+	template<typename BlockType>
+	AMT& ExplicitHierarchy<BlockType>::assign(const AMT& other)
 	{
 		const ExplicitHierarchy<BlockType>& otherHierarchy = dynamic_cast<const ExplicitHierarchy<BlockType>&>(other);
 
 		std::function<void(BlockType*, BlockType*)> copy;
 		copy = [&](BlockType* myBlock, BlockType* otherBlock)
-		{
-		    myBlock->data_ = otherBlock->data_;
-
-            const size_t sonCount = otherHierarchy.degree(*otherBlock);
-			size_t copiedSonCount = 0;
-			size_t sonIndex = 0;
-			while (copiedSonCount < sonCount)
 			{
-				BlockType* otherSon = otherHierarchy.accessSon(*otherBlock, sonIndex);
-				if (otherSon != nullptr)
+				myBlock->data_ = otherBlock->data_;
+
+				const size_t sonCount = otherHierarchy.degree(*otherBlock);
+				size_t copiedSonCount = 0;
+				size_t sonIndex = 0;
+				while (copiedSonCount < sonCount)
 				{
-					copy(&this->emplaceSon(*myBlock, sonIndex), otherSon);
-					copiedSonCount++;
+					BlockType* otherSon = otherHierarchy.accessSon(*otherBlock, sonIndex);
+					if (otherSon != nullptr)
+					{
+						copy(&this->emplaceSon(*myBlock, sonIndex), otherSon);
+						copiedSonCount++;
+					}
+					sonIndex++;
 				}
-				sonIndex++;
-			}
-		};
+			};
 
 		this->clear();
 		if (otherHierarchy.root_ != nullptr)
@@ -234,31 +234,34 @@ namespace ds::amt {
 	}
 
 	template<typename BlockType>
-    void ExplicitHierarchy<BlockType>::clear()
+	void ExplicitHierarchy<BlockType>::clear()
 	{
-		// TODO 07
-		// po implementacii vymazte vyhodenie vynimky!
-		throw std::runtime_error("Not implemented yet");
+		this->processPostOrder(this->accessRoot(), [&](BlockType* block) 
+			{
+				this->memoryManager_->releaseMemory(block);
+			});
+		root_ = nullptr;
 	}
 
 	template<typename BlockType>
-    size_t ExplicitHierarchy<BlockType>::size() const
+	size_t ExplicitHierarchy<BlockType>::size() const
 	{
-		// TODO 07
-		// po implementacii vymazte vyhodenie vynimky!
-		throw std::runtime_error("Not implemented yet");
+		size_t size = 0;
+		this->processPreOrder(this->accessRoot(), [&](const BlockType*) 
+			{
+				++size;
+			});
+		return size;
 	}
 
 	template<typename BlockType>
-    bool ExplicitHierarchy<BlockType>::isEmpty() const
+	bool ExplicitHierarchy<BlockType>::isEmpty() const
 	{
-		// TODO 07
-		// po implementacii vymazte vyhodenie vynimky!
-		throw std::runtime_error("Not implemented yet");
+		return root_ == nullptr;
 	}
 
 	template<typename BlockType>
-    bool ExplicitHierarchy<BlockType>::equals(const AMT& other)
+	bool ExplicitHierarchy<BlockType>::equals(const AMT& other)
 	{
 		const ExplicitHierarchy<BlockType>* otherHierarchy = dynamic_cast<const ExplicitHierarchy<BlockType>*>(&other);
 
@@ -269,79 +272,75 @@ namespace ds::amt {
 
 		std::function<bool(BlockType*, BlockType*)> compare;
 		compare = [&](BlockType* myBlock, BlockType* otherBlock) -> bool
-		{
-			if (myBlock == nullptr && otherBlock == nullptr)
 			{
-				return true;
-			}
-			else if (myBlock == nullptr || otherBlock == nullptr)
-			{
-				return false;
-			}
-			else if (this->degree(*myBlock) != otherHierarchy->degree(*otherBlock))
-			{
-				return false;
-			}
-			else if (!(myBlock->data_ == otherBlock->data_))
-			{
-				return false;
-			}
-			else
-			{
-				size_t sonCount = this->degree(*myBlock);
-				size_t sonsProcessed = 0;
-				size_t i = 0;
-				while (sonsProcessed < sonCount)
+				if (myBlock == nullptr && otherBlock == nullptr)
 				{
-					BlockType* mySon = this->accessSon(*myBlock, i);
-					BlockType* otherSon = otherHierarchy->accessSon(*otherBlock, i);
-					if (mySon != nullptr)
-					{
-						++sonsProcessed;
-					}
-					if (!compare(mySon, otherSon))
-					{
-						return false;
-					}
-					++i;
+					return true;
 				}
-				return true;
-			}
-		};
+				else if (myBlock == nullptr || otherBlock == nullptr)
+				{
+					return false;
+				}
+				else if (this->degree(*myBlock) != otherHierarchy->degree(*otherBlock))
+				{
+					return false;
+				}
+				else if (!(myBlock->data_ == otherBlock->data_))
+				{
+					return false;
+				}
+				else
+				{
+					size_t sonCount = this->degree(*myBlock);
+					size_t sonsProcessed = 0;
+					size_t i = 0;
+					while (sonsProcessed < sonCount)
+					{
+						BlockType* mySon = this->accessSon(*myBlock, i);
+						BlockType* otherSon = otherHierarchy->accessSon(*otherBlock, i);
+						if (mySon != nullptr)
+						{
+							++sonsProcessed;
+						}
+						if (!compare(mySon, otherSon))
+						{
+							return false;
+						}
+						++i;
+					}
+					return true;
+				}
+			};
 
 		return compare(root_, otherHierarchy->root_);
 	}
 
 	template<typename BlockType>
-    BlockType* ExplicitHierarchy<BlockType>::accessRoot() const
+	BlockType* ExplicitHierarchy<BlockType>::accessRoot() const
 	{
-		// TODO 07
-		// po implementacii vymazte vyhodenie vynimky!
-		throw std::runtime_error("Not implemented yet");
+		return root_;
 	}
 
 	template<typename BlockType>
-    BlockType* ExplicitHierarchy<BlockType>::accessParent(const BlockType& node) const
+	BlockType* ExplicitHierarchy<BlockType>::accessParent(const BlockType& node) const
 	{
-		// TODO 07
-		// po implementacii vymazte vyhodenie vynimky!
-		throw std::runtime_error("Not implemented yet");
+		return static_cast<BlockType*>(node.parent_);
 	}
 
 	template<typename BlockType>
     BlockType& ExplicitHierarchy<BlockType>::emplaceRoot()
 	{
-		// TODO 07
-		// po implementacii vymazte vyhodenie vynimky!
-		throw std::runtime_error("Not implemented yet");
+		root_ = this->memoryManager_->allocateMemory();
+		return *root_;
 	}
 
 	template<typename BlockType>
     void ExplicitHierarchy<BlockType>::changeRoot(BlockType* newRoot)
 	{
-		// TODO 07
-		// po implementacii vymazte vyhodenie vynimky!
-		throw std::runtime_error("Not implemented yet");
+		if (newRoot != nullptr) {
+			newRoot->parent_ = nullptr;
+		}
+		root_ = newRoot;
 	}
 
 	template<typename DataType>
@@ -425,17 +424,25 @@ namespace ds::amt {
     template<typename DataType, size_t K>
     size_t KWayExplicitHierarchy<DataType, K>::degree(const BlockType& node) const
 	{
-		// TODO 07
-		// po implementacii vymazte vyhodenie vynimky!
-		throw std::runtime_error("Not implemented yet");
+		int result = 0;
+		for (BlockType& son : node.sons_) {
+			if (son == nullptr)
+			{
+				++result;
+			}
+		}
+		return result;
 	}
 
 	template<typename DataType, size_t K>
 	auto KWayExplicitHierarchy<DataType, K>::accessSon(const BlockType& node, size_t sonOrder) const -> BlockType*
 	{
-		// TODO 07
-		// po implementacii vymazte vyhodenie vynimky!
-		throw std::runtime_error("Not implemented yet");
+		MemoryBlock<BlockType*> sonsBlock = node.sons_->access(sonOrder);
+		if (sonsBlock != nullptr)
+		{
+			return sonsBlock.data_;
+		}
+		return nullptr
 	}
 
 	template<typename DataType, size_t K>
