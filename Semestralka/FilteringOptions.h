@@ -28,10 +28,10 @@ public:
 	int getMask() const {
 		return this->userMask;
 	}
-	void setMask(int mask) {
+	void setMask(int& mask) {
 		this->userMask = mask;
 	}
-	void setUserChoice(int userChoice) {
+	void setUserChoice(int& userChoice) {
 		this->userChoice = userChoice;
 	}
 	void setNextHop(const std::string& nextHop) {
