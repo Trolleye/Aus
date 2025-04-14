@@ -28,7 +28,7 @@ public:
 	RoutingTableHierarchy();
 	~RoutingTableHierarchy();
 	void addFromVector();
-	void addNode(int IP, ds::amt::MultiWayExplicitHierarchyBlock<RoutingRecordNode>& currentNode);
+	ds::amt::MultiWayExplicitHierarchyBlock<RoutingRecordNode>* addNode(int IP, ds::amt::MultiWayExplicitHierarchyBlock<RoutingRecordNode>& currentNode, int octet, RoutingRecord* record);
 	std::vector<int> getOctets(RoutingRecord& record);
 };
 
@@ -58,43 +58,51 @@ inline std::vector<int> RoutingTableHierarchy::getOctets(RoutingRecord& record)
 
 inline void RoutingTableHierarchy::addFromVector()
 {
-	std::vector<RoutingRecord> vector = Parser::parseCSV("RT.csv");
-	decltype(auto) currentNode = hierarchy.accessRoot();
+    std::vector<RoutingRecord> vector = Parser::parseCSV("RT.csv");
 
-	for (RoutingRecord record : vector) {
-		std::vector<int> octetsIP = this->getOctets(record);
-		for (size_t i = 0; i < 4; i++)
-		{
-			int IP = octetsIP[i];
+    for (RoutingRecord& record : vector) {
+        std::vector<int> octetsIP = this->getOctets(record);
+        decltype(auto) currentNode = hierarchy.accessRoot();
+        for (size_t i = 0; i < 4; i++)
+        {
+            int IP = octetsIP[i];
+            bool found = false;
 
-			if (currentNode->sons_->size() == 0)
-			{
-				this->addNode(IP, *currentNode);
-			}
-			else
-			{
-				for (decltype(auto) son : *currentNode->sons_)
-				{
-					if (son->data_.getIp() == IP)
-					{
-						currentNode = son;
-					}
-					else
-					{
-						this->addNode(IP, *currentNode);
-					}
-				}
-			}
-			
-		}
-	}
-	std::cout << this->hierarchy.size();
+            if (currentNode->sons_->size() == 0)
+            {
+                currentNode = this->addNode(IP, *currentNode, i, &record);
+                
+            }
+            else
+            {
+                for (decltype(auto) son : *currentNode->sons_)
+                {
+                    if (son->data_.getIp() == IP)
+                    {
+                        currentNode = son;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    currentNode = this->addNode(IP, *currentNode, i, &record);
+                }
+            }
+        }
+    }
+    std::cout << this->hierarchy.size();
 }
 
 
-inline void RoutingTableHierarchy::addNode(int IP, ds::amt::MultiWayExplicitHierarchyBlock<RoutingRecordNode>& currentNode)
+inline ds::amt::MultiWayExplicitHierarchyBlock<RoutingRecordNode>* RoutingTableHierarchy::addNode(int IP, ds::amt::MultiWayExplicitHierarchyBlock<RoutingRecordNode>& currentNode, int octet, RoutingRecord* record)
 {
 	decltype(auto) sonNode = this->hierarchy.emplaceSon(currentNode, currentNode.sons_->size());
-	sonNode.data_ = RoutingRecordNode(IP);
-	currentNode = sonNode;
+    sonNode.data_ = RoutingRecordNode(IP);
+
+    if (octet == 3)
+    {
+        sonNode.data_.addRecord(record);
+    }
+	return &sonNode;
 }
