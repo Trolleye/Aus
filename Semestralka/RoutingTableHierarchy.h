@@ -10,14 +10,14 @@ private:
 	ds::amt::ImplicitSequence<RoutingRecord*> records;
 
 public:
-	RoutingRecordNode() : ip(0) {}
-	RoutingRecordNode(int ip) : ip(ip) {}
-	~RoutingRecordNode() { records.clear(); }
+	inline RoutingRecordNode() : ip(0) {}
+	inline RoutingRecordNode(int ip) : ip(ip) {}
+	inline ~RoutingRecordNode() { records.clear(); }
 
-	void addRecord(RoutingRecord* record) { records.insertLast().data_ = record; }
-	int getIp() { return ip; }
-	ds::amt::ImplicitSequence<RoutingRecord*> getRecords() { return records; }
-	bool operator==(const RoutingRecordNode& other) const { return ip == other.ip; }
+	inline void addRecord(RoutingRecord* record) { records.insertLast().data_ = record; }
+	inline int getIp() { return ip; }
+	inline ds::amt::ImplicitSequence<RoutingRecord*> getRecords() { return records; }
+	inline bool operator==(const RoutingRecordNode& other) const { return ip == other.ip; }
 };
 
 class RoutingTableHierarchy
@@ -27,7 +27,7 @@ private:
 public:
 	RoutingTableHierarchy();
 	~RoutingTableHierarchy();
-	void addFromVector(std::vector<RoutingRecord>& vector);
+	void addFromVector();
 	void addNode(int IP, ds::amt::MultiWayExplicitHierarchyBlock<RoutingRecordNode>& currentNode);
 	std::vector<int> getOctets(RoutingRecord& record);
 };
@@ -56,8 +56,9 @@ inline std::vector<int> RoutingTableHierarchy::getOctets(RoutingRecord& record)
 	return octets;
 }
 
-inline void RoutingTableHierarchy::addFromVector(std::vector<RoutingRecord>& vector)
+inline void RoutingTableHierarchy::addFromVector()
 {
+	std::vector<RoutingRecord> vector = Parser::parseCSV("RT.csv");
 	decltype(auto) currentNode = hierarchy.accessRoot();
 
 	for (RoutingRecord record : vector) {
@@ -80,6 +81,7 @@ inline void RoutingTableHierarchy::addFromVector(std::vector<RoutingRecord>& vec
 			}
 		}
 	}
+	std::cout << this->hierarchy.size();
 }
 
 

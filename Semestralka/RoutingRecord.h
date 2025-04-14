@@ -24,7 +24,7 @@ public:
 	RoutingRecord(std::string lifeTime, std::string prefixAddress, std::string prefixMask, std::string nextHop);
 };
 
-RoutingRecord::RoutingRecord()
+inline RoutingRecord::RoutingRecord()
 {
 	this->lifeTime = "";
 	this->lifeTimeSec = 0;
@@ -35,7 +35,7 @@ RoutingRecord::RoutingRecord()
 }
 
 
-RoutingRecord::RoutingRecord(std::string lifeTime, std::string prefixAddress, std::string prefixMask, std::string nextHop)
+inline RoutingRecord::RoutingRecord(std::string lifeTime, std::string prefixAddress, std::string prefixMask, std::string nextHop)
 {
 	this->lifeTime = lifeTime;
 	this->lifeTimeSec = toSec(lifeTime);
@@ -52,7 +52,7 @@ RoutingRecord::RoutingRecord(std::string lifeTime, std::string prefixAddress, st
 
 
 
-bool RoutingRecord::matchWithAddress(std::string& paAddress, int& paMask)
+inline bool RoutingRecord::matchWithAddress(std::string& paAddress, int& paMask)
 {
 	if (paMask == 0) {
 		return false;
@@ -69,7 +69,7 @@ bool RoutingRecord::matchWithAddress(std::string& paAddress, int& paMask)
 	return true;
 }
 
-bool RoutingRecord::matchLifeTime(std::string& fromTime, std::string& toTime)
+inline bool RoutingRecord::matchLifeTime(std::string& fromTime, std::string& toTime)
 {
 	if (this->toSec(toTime) >= this->lifeTimeSec && this->lifeTimeSec >= this->toSec(fromTime))
 	{
@@ -78,12 +78,12 @@ bool RoutingRecord::matchLifeTime(std::string& fromTime, std::string& toTime)
 	return false;
 }
 
-bool RoutingRecord::matchNextHop(std::string& paNextHop)
+inline bool RoutingRecord::matchNextHop(std::string& paNextHop)
 {
 	return paNextHop == this->nextHop;
 }
 
-std::string RoutingRecord::getInfo()
+inline std::string RoutingRecord::getInfo()
 {
 	return "LifeTime: " + this->lifeTime + " Prefix Address: " + this->prefixAddress + " Prefix Mask: " + this->prefixMask + " Next Hop: " + this->nextHop;
 }
@@ -93,7 +93,7 @@ inline std::string RoutingRecord::getIPAddress()
 	return this->prefixAddress;
 }
 
-int RoutingRecord::toSec(std::string& paLifeTime)
+inline int RoutingRecord::toSec(std::string& paLifeTime)
 {
 	int sec = 0;
 	std::string temp = "";
@@ -140,7 +140,7 @@ int RoutingRecord::toSec(std::string& paLifeTime)
 }
 
 
-std::array<int, 32> RoutingRecord::toBinary(const std::string& paAddress) {
+inline std::array<int, 32> RoutingRecord::toBinary(const std::string& paAddress) {
 	std::array<int, 32> bitArray{};
 	std::stringstream ss(paAddress);
 	std::string segment;
