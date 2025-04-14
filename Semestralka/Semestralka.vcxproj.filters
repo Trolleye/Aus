@@ -40,11 +40,5 @@
     <ClInclude Include="FilteringOptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Cast1Main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RoutingRecordNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

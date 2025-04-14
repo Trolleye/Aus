@@ -1,7 +1,25 @@
 #pragma once
 #include "libds/amt/explicit_hierarchy.h"
-#include "RoutingRecordNode.h"
 #include <vector>
+#include "Parser.h"
+
+class RoutingRecordNode
+{
+private:
+	int ip;
+	ds::amt::ImplicitSequence<RoutingRecord*> records;
+
+public:
+	RoutingRecordNode() : ip(0) {}
+	RoutingRecordNode(int ip) : ip(ip) {}
+	~RoutingRecordNode() { records.clear(); }
+
+	void addRecord(RoutingRecord* record) { records.insertLast().data_ = record; }
+	int getIp() { return ip; }
+	ds::amt::ImplicitSequence<RoutingRecord*> getRecords() { return records; }
+	bool operator==(const RoutingRecordNode& other) const { return ip == other.ip; }
+};
+
 class RoutingTableHierarchy
 {
 private:
@@ -14,7 +32,7 @@ public:
 	std::vector<int> getOctets(RoutingRecord& record);
 };
 
-RoutingTableHierarchy::RoutingTableHierarchy()
+inline RoutingTableHierarchy::RoutingTableHierarchy()
 {
 	hierarchy.emplaceRoot();
 }
