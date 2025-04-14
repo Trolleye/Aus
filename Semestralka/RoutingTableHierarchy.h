@@ -67,18 +67,25 @@ inline void RoutingTableHierarchy::addFromVector()
 		{
 			int IP = octetsIP[i];
 
-			for (decltype(auto) son : *currentNode->sons_)
+			if (currentNode->sons_->size() == 0)
 			{
-				if (son->data_.getIp() == IP)
+				this->addNode(IP, *currentNode);
+			}
+			else
+			{
+				for (decltype(auto) son : *currentNode->sons_)
 				{
-					currentNode = son;
-				}
-				else
-				{
-					this->addNode(IP, *currentNode);
-
+					if (son->data_.getIp() == IP)
+					{
+						currentNode = son;
+					}
+					else
+					{
+						this->addNode(IP, *currentNode);
+					}
 				}
 			}
+			
 		}
 	}
 	std::cout << this->hierarchy.size();
