@@ -131,16 +131,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="RoutingTableHierarchy.h" />
     <ClCompile Include="Semestralka.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="RT.csv" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Cast1Main.h" />
     <ClInclude Include="Filter.h" />
     <ClInclude Include="FilteringOptions.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="RoutingRecord.h" />
+    <ClInclude Include="RoutingRecordNode.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

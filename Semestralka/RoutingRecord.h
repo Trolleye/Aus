@@ -19,6 +19,7 @@ public:
 	bool matchLifeTime(std::string& fromTime, std::string& toTime);
 	bool matchNextHop(std::string& paNextHop);
 	std::string getInfo();
+	std::string getIPAddress();
 	RoutingRecord();
 	RoutingRecord(std::string lifeTime, std::string prefixAddress, std::string prefixMask, std::string nextHop);
 };
@@ -77,8 +78,6 @@ bool RoutingRecord::matchLifeTime(std::string& fromTime, std::string& toTime)
 	return false;
 }
 
-
-
 bool RoutingRecord::matchNextHop(std::string& paNextHop)
 {
 	return paNextHop == this->nextHop;
@@ -89,6 +88,10 @@ std::string RoutingRecord::getInfo()
 	return "LifeTime: " + this->lifeTime + " Prefix Address: " + this->prefixAddress + " Prefix Mask: " + this->prefixMask + " Next Hop: " + this->nextHop;
 }
 
+inline std::string RoutingRecord::getIPAddress()
+{
+	return this->prefixAddress;
+}
 
 int RoutingRecord::toSec(std::string& paLifeTime)
 {

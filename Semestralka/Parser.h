@@ -1,5 +1,4 @@
-﻿#ifndef PARSER_H
-
+﻿#pragma once
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -61,5 +60,3 @@ private:
         return RoutingRecord(lifeTime, prefixAddress, prefixMask, nextHop);
     }
 };
-
-#endif

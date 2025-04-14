@@ -51,7 +51,8 @@ namespace ds::amt {
 					visitedSonCount_(0),
 					currentNodeProcessed_(false),
 					previousPosition_(previousPosition)
-				{}
+				{
+				}
 
 				DepthFirstIteratorPosition(const DepthFirstIteratorPosition& other) :
 					currentNode_(other.currentNode_),
@@ -60,7 +61,8 @@ namespace ds::amt {
 					visitedSonCount_(other.visitedSonCount_),
 					currentNodeProcessed_(other.currentNodeProcessed_),
 					previousPosition_(other.previousPosition_)
-				{}
+				{
+				}
 
 				~DepthFirstIteratorPosition() {
 					currentNode_ = nullptr;
@@ -113,7 +115,7 @@ namespace ds::amt {
 		{
 		public:
 			PostOrderHierarchyIterator(Hierarchy<BlockType>* hierarchy, BlockType* node);
-			PostOrderHierarchyIterator(const PreOrderHierarchyIterator& other);
+			PostOrderHierarchyIterator(const PostOrderHierarchyIterator& other);
 			PostOrderHierarchyIterator& operator++();
 		};
 
@@ -505,7 +507,7 @@ namespace ds::amt {
 	}
 
 	template<typename BlockType>
-	Hierarchy<BlockType>::PostOrderHierarchyIterator::PostOrderHierarchyIterator(const PreOrderHierarchyIterator& other) :
+	Hierarchy<BlockType>::PostOrderHierarchyIterator::PostOrderHierarchyIterator(const PostOrderHierarchyIterator& other) :
 		Hierarchy<BlockType>::DepthFirstIterator::DepthFirstIterator(other)
 	{
 	}

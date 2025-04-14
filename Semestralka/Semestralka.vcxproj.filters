@@ -18,6 +18,9 @@
     <ClCompile Include="Semestralka.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RoutingTableHierarchy.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="RT.csv">
@@ -35,6 +38,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FilteringOptions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Cast1Main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RoutingRecordNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
