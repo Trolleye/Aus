@@ -43,6 +43,7 @@ public:
     auto end();
     auto goToSon(int IP);
     auto goToParent();
+    void printRecords();
 };
 
 inline RoutingTableHierarchyIterator::RoutingTableHierarchyIterator(ds::amt::MultiWayExplicitHierarchyBlock<RoutingRecordNode>* userCurrentNode, ds::amt::MultiWayExplicitHierarchy<RoutingRecordNode>* hierarchy)
@@ -93,6 +94,16 @@ inline auto RoutingTableHierarchyIterator::goToParent()
     else
     {
         std::cout << "Already in root" << std::endl;
+    }
+}
+
+inline void RoutingTableHierarchyIterator::printRecords()
+{
+    if (this->currentUserOctet == 4)
+    {
+        for (RoutingRecord* record : this->userCurrentNode->data_.getRecords()) {
+            std::cout << record->getInfo() << std::endl;
+        }
     }
 }
 
@@ -149,6 +160,10 @@ inline void RoutingTableHierarchy::addFromVector()
                 if (son->data_.getIp() == IP) {
                     currentNode = son;
                     found = true;
+                    if (i == 3)
+                    {
+                        son->data_.addRecord(&record);
+                    }
                     break;
                 }
             }
@@ -170,8 +185,6 @@ inline ds::amt::MultiWayExplicitHierarchyBlock<RoutingRecordNode>* RoutingTableH
     sonNode.data_ = RoutingRecordNode(IP);
     if (record != nullptr) {
         sonNode.data_.addRecord(record);
-        for (decltype(auto) record : sonNode.data_.getRecords()) {
-        }
     }
     return &sonNode;
 }

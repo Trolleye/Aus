@@ -7,14 +7,18 @@ int main() {
 	while (true) {
 		std::string input;
 		std::cin >> input;
-		if (input != "parent")
+		if (input == "parent")
 		{
-			int itinput = std::stoi(input);
-			iterator.goToSon(itinput);
+			iterator.goToParent();
+		}
+		else if (input == "records")
+		{
+			iterator.printRecords();
 		}
 		else
 		{
-			iterator.goToParent();
+			int itinput = std::stoi(input);
+			iterator.goToSon(itinput);
 		}
 	}
 }
