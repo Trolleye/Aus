@@ -1,5 +1,6 @@
 #include "RoutingTableHierarchy.h"
 int main() {
+	initHeapMonitor();
 	RoutingTableHierarchy hierarchy = RoutingTableHierarchy();
 	hierarchy.addFromVector();
 	auto iterator = RoutingTableHierarchyIterator(hierarchy.getHierarchy()->accessRoot(), hierarchy.getHierarchy());
