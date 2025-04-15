@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Cast1Main.cpp" />
     <ClCompile Include="RoutingTableHierarchy.h" />
     <ClCompile Include="Semestralka.cpp" />
   </ItemGroup>
