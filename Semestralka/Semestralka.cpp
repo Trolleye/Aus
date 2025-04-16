@@ -54,7 +54,7 @@ int main() {
     auto matchNextHopPredRef = [&](RoutingRecord& record) { return record.matchNextHop(userNextHop); };
     auto matchWithAddressPredRef = [&](RoutingRecord& record) {return record.matchWithAddress(userAddress, userMask); };
     auto matchLifetimePredRef = [&](RoutingRecord& record) {return record.matchLifeTime(userFromTime, userToTime); };
-	auto isLeaf = [&](RoutingRecordNode& record) { return record.getRecords().size() > 0;};
+	auto isLeaf = [&](RoutingRecordNode& record) { return !record.getRecords().empty();};
 
 	auto pushToFiltered = [&](RoutingRecord* record) {
         filtered.push_back(*record);
@@ -242,7 +242,7 @@ int main() {
                         }
                     } while (!options.isValidTime(userToTime));
 
-                    //Filter::filter(hierarchyCurrentNode, hierarchyEnd, isLeaf, processLifetimePred);
+                    Filter::filter(hierarchyCurrentNode, hierarchyEnd, isLeaf, processLifetimePred);
                     printFiltered(filtered);
                     break;
 
@@ -255,7 +255,7 @@ int main() {
                         }
                     } while (!options.isValidIP(userNextHop));
 
-                    //Filter::filter(hierarchyCurrentNode, hierarchyEnd, isLeaf, processNextHopPred);
+                    Filter::filter(hierarchyCurrentNode, hierarchyEnd, isLeaf, processNextHopPred);
                     printFiltered(filtered);
                     break;
 
@@ -276,7 +276,7 @@ int main() {
                         }
                     } while (userMask < 1 || userMask > 31);
 
-                    //Filter::filter(hierarchyCurrentNode, hierarchyEnd, isLeaf, processAddressPred);
+                    Filter::filter(hierarchyCurrentNode, hierarchyEnd, isLeaf, processAddressPred);
                     printFiltered(filtered);
                     break;
 
