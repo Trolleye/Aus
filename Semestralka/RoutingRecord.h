@@ -55,7 +55,7 @@ inline RoutingRecord::RoutingRecord(std::string lifeTime, std::string prefixAddr
 inline bool RoutingRecord::matchWithAddress(std::string& paAddress, int& paMask)
 {
 	if (paMask == 0) {
-		return false;
+		return true;
 	}
 	
 	std::array<int, 32> myAddress = this->toBinary(this->prefixAddress);

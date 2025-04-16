@@ -73,7 +73,14 @@ inline auto RoutingTableHierarchyIterator::goToSon(int IP)
             break;
         }
     }
-       std::cout << "Currently in octet: " << this->currentUserOctet << " with value: " << userCurrentNode->data_.getIp() << std::endl;
+    if (this->currentUserOctet == 0)
+    {
+        std::cout << "Currently in root" << std::endl;
+    }
+    else
+    {
+        std::cout << "Currently in octet: " << this->currentUserOctet << " with value: " << userCurrentNode->data_.getIp() << std::endl;
+    }
 }
 
 inline auto RoutingTableHierarchyIterator::goToParent()
