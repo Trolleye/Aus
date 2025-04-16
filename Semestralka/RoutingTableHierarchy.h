@@ -22,11 +22,10 @@ class RoutingTableHierarchy
 {
 private:
 	ds::amt::MultiWayExplicitHierarchy<RoutingRecordNode> hierarchy;
-    std::vector<RoutingRecord> vector = Parser::parseCSV("RT.csv");
     ds::amt::MultiWayExplicitHierarchyBlock<RoutingRecordNode>* userCurrentNode = nullptr;
 public:
 	RoutingTableHierarchy();
-	void addFromVector();
+	void addFromVector(std::vector<RoutingRecord>& vector);
 	ds::amt::MultiWayExplicitHierarchyBlock<RoutingRecordNode>* addNode(int IP, ds::amt::MultiWayExplicitHierarchyBlock<RoutingRecordNode>& currentNode, int octet, RoutingRecord* record);
 	std::vector<int> getOctets(RoutingRecord& record);
     ds::amt::MultiWayExplicitHierarchy<RoutingRecordNode>* getHierarchy();
@@ -142,9 +141,9 @@ inline ds::amt::MultiWayExplicitHierarchy<RoutingRecordNode>* RoutingTableHierar
     return &this->hierarchy;
 }
 
-inline void RoutingTableHierarchy::addFromVector()
+inline void RoutingTableHierarchy::addFromVector(std::vector<RoutingRecord>& vector)
 {
-    for (RoutingRecord& record : this->vector) {
+    for (RoutingRecord& record : vector) {
         std::vector<int> octetsIP = this->getOctets(record);
         decltype(auto) currentNode = hierarchy.accessRoot();
 
