@@ -31,65 +31,53 @@ public:
     ds::amt::MultiWayExplicitHierarchy<RoutingRecordNode>* getHierarchy();
 };
 
-class RoutingTableHierarchyIterator {
+class RoutingTableHierarchyIterator : public ds::amt::MultiWayExplicitHierarchy<RoutingRecordNode>::PreOrderHierarchyIterator{
 private:
-    ds::amt::MultiWayExplicitHierarchyBlock<RoutingRecordNode>* userCurrentNode;
-    ds::amt::MultiWayExplicitHierarchy<RoutingRecordNode>* hierarchy;
     int currentUserOctet = 0;
 public:
-    RoutingTableHierarchyIterator(ds::amt::MultiWayExplicitHierarchyBlock<RoutingRecordNode>* userCurrentNode, ds::amt::MultiWayExplicitHierarchy<RoutingRecordNode>* hierarchy);
-    auto currentPosition();
-    auto end();
+    RoutingTableHierarchyIterator(ds::amt::MultiWayExplicitHierarchyBlock<RoutingRecordNode>* userCurrentNode, ds::amt::MultiWayExplicitHierarchy<RoutingRecordNode>* hierarchy);    
     auto goToSon(int IP);
     auto goToParent();
     void printRecords();
 };
 
-inline RoutingTableHierarchyIterator::RoutingTableHierarchyIterator(ds::amt::MultiWayExplicitHierarchyBlock<RoutingRecordNode>* userCurrentNode, ds::amt::MultiWayExplicitHierarchy<RoutingRecordNode>* hierarchy)
-{
-    this->userCurrentNode = userCurrentNode;
-    this->hierarchy = hierarchy;
-}
 
-inline auto RoutingTableHierarchyIterator::currentPosition()
-{
-    return  ds::amt::MultiWayExplicitHierarchy<RoutingRecordNode>::PreOrderHierarchyIterator(this->hierarchy, this->userCurrentNode);
-}
 
-inline auto RoutingTableHierarchyIterator::end()
+inline RoutingTableHierarchyIterator::RoutingTableHierarchyIterator(ds::amt::MultiWayExplicitHierarchyBlock<RoutingRecordNode>* userCurrentNode, ds::amt::MultiWayExplicitHierarchy<RoutingRecordNode>* hierarchy) : 
+    ds::amt::MultiWayExplicitHierarchy<RoutingRecordNode>::PreOrderHierarchyIterator(hierarchy, userCurrentNode)
 {
-    return ds::amt::MultiWayExplicitHierarchy<RoutingRecordNode>::PreOrderHierarchyIterator(this->hierarchy, nullptr);
+
 }
 
 inline auto RoutingTableHierarchyIterator::goToSon(int IP)
 {
-    for (decltype(auto) son : *this->userCurrentNode->sons_)
+    for (decltype(auto) son : *this->currentPosition_->currentNode_->sons_)
     {
         if (!son) continue;
         if (son->data_.getIp() == IP) {
-            userCurrentNode = son;
+            this->currentPosition_->currentNode_ = son;
             ++this->currentUserOctet;
             break;
         }
     }
     if (this->currentUserOctet == 0)
     {
-        std::cout << "Currently in root" << std::endl;
+        std::cout << "Currently in octet: " << this->currentUserOctet << " with value: " << this->currentPosition_->currentNode_->data_.getIp() << std::endl;
     }
     else
     {
-        std::cout << "Currently in octet: " << this->currentUserOctet << " with value: " << userCurrentNode->data_.getIp() << std::endl;
+        std::cout << "Currently in octet: " << this->currentUserOctet << " with value: " << this->currentPosition_->currentNode_->data_.getIp() << std::endl;
     }
 }
 
 inline auto RoutingTableHierarchyIterator::goToParent()
 {
-    if (this->userCurrentNode != this->hierarchy->accessRoot()) {
-       this->userCurrentNode = this->hierarchy->accessParent(*userCurrentNode);
+    if (this->currentPosition_->currentNode_ != this->hierarchy_->accessRoot()) {
+       this->currentPosition_->currentNode_ = this->hierarchy_->accessParent(*this->currentPosition_->currentNode_);
        --this->currentUserOctet;
        if (this->currentUserOctet != 0)
        {
-           std::cout << "Currently in octet: " << this->currentUserOctet << " with value: " << userCurrentNode->data_.getIp() << std::endl;
+           std::cout << "Currently in octet: " << this->currentUserOctet << " with value: " << this->currentPosition_->currentNode_->data_.getIp() << std::endl;
        }
        else
        {
@@ -107,7 +95,7 @@ inline void RoutingTableHierarchyIterator::printRecords()
 {
     if (this->currentUserOctet == 4)
     {
-        for (RoutingRecord* record : this->userCurrentNode->data_.getRecords()) {
+        for (RoutingRecord* record : this->currentPosition_->currentNode_->data_.getRecords()) {
             std::cout << record->getInfo() << std::endl;
         }
     }

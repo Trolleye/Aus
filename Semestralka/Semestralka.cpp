@@ -1,7 +1,6 @@
 #include "RoutingTableHierarchy.h"
 #include "Filter.h"
 #include "FilteringOptions.h"
-
 static void showMenu() {
 	std::cout << "======Menu======" << '\n';
 	std::cout << "1. Filter by lifetime" << '\n';
@@ -28,9 +27,9 @@ static void showMovementOptions() {
 	std::cout << "Enter your choice: ";
 }
 
-static void printFiltered(std::vector<RoutingRecord>& filteredVector) {
-	for (RoutingRecord& record : filteredVector) {
-		std::cout << record.getInfo() << std::endl;
+static void printFiltered(std::vector<RoutingRecord*>& filteredVector) {
+	for (RoutingRecord* record : filteredVector) {
+		std::cout << record->getInfo() << std::endl;
 	}
 }
 
@@ -43,7 +42,7 @@ int main() {
 	std::string userFromTime;
 	std::string userToTime;
 	FilteringOptions options = FilteringOptions();
-	std::vector<RoutingRecord> filtered;
+	std::vector<RoutingRecord*> filtered = std::vector<RoutingRecord*>();
 	RoutingTableHierarchy hierarchy = RoutingTableHierarchy();
 	hierarchy.addFromVector(records);
 	auto hierarchyCurrentNode = RoutingTableHierarchyIterator(hierarchy.getHierarchy()->accessRoot(), hierarchy.getHierarchy());
@@ -55,13 +54,12 @@ int main() {
     auto matchWithAddressPredRef = [&](RoutingRecord& record) {return record.matchWithAddress(userAddress, userMask); };
     auto matchLifetimePredRef = [&](RoutingRecord& record) {return record.matchLifeTime(userFromTime, userToTime); };
 	auto isLeaf = [&](RoutingRecordNode& record) { return !record.getRecords().empty();};
-
 	auto pushToFiltered = [&](RoutingRecord* record) {
-        filtered.push_back(*record);
+        filtered.push_back(record);
 	};
 
     auto pushToFilteredRef = [&](RoutingRecord& record) {
-        filtered.push_back(record);
+        filtered.push_back(&record);
     };
 
 	auto processLifetimePred = [&](RoutingRecordNode& node) {
