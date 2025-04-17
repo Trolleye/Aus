@@ -264,8 +264,6 @@ namespace ds::adt {
     template<typename P, typename T, typename SequenceType>
     typename SequenceType::BlockType* UnsortedSequencePriorityQueue<P, T, SequenceType>::findHighestPriorityBlock()
     {
-        // TODO 09
-        // po implementacii vymazte vyhodenie vynimky!
         throw std::runtime_error("Not implemented yet");
     }
 
@@ -283,9 +281,18 @@ namespace ds::adt {
     template<typename P, typename T, typename SequenceType>
     T SortedSequencePriorityQueue<P, T, SequenceType>::pop()
     {
-        // TODO 09
-        // po implementacii vymazte vyhodenie vynimky!
+        /*if (this->isEmpty())
+        {
+            throw std::out_of_range("Queue is empty!");
+        }
+        auto* block = this->findOfHighestPriorityBlock();
+        auto* lastBlock = this->getSequence()->accessLast();
+        T data = block - data_.data_;
+        std::swap(block->data_, lastBlock->data_);
+        this->getSequence()->removeLast();
+        return data;*/
         throw std::runtime_error("Not implemented yet");
+
     }
 
     template<typename P, typename T>

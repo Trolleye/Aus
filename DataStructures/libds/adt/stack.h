@@ -71,25 +71,29 @@ namespace ds::adt {
     template<typename T>
     void ImplicitStack<T>::push(T element)
     {
-        // TODO 09
-        // po implementacii vymazte vyhodenie vynimky!
-        throw std::runtime_error("Not implemented yet");
+        this->getSequence()->insertLast().data_ = element;
     }
 
     template<typename T>
     T& ImplicitStack<T>::peek()
     {
-        // TODO 09
-        // po implementacii vymazte vyhodenie vynimky!
-        throw std::runtime_error("Not implemented yet");
+        if (this->isEmpty())
+        {
+            throw std::out_of_range("Stack is empty!");
+        }
+        return this->getSequence()->accessLast()->data_;
     }
 
     template<typename T>
     T ImplicitStack<T>::pop()
     {
-        // TODO 09
-        // po implementacii vymazte vyhodenie vynimky!
-        throw std::runtime_error("Not implemented yet");
+        if (this->isEmpty())
+        {
+            throw std::out_of_range("Stack is empty!");
+        }
+        T data = this->getSequence()->accessLast()->data_;
+        this->getSequence()->removeLast();
+        return data;
     }
 
     template<typename T>

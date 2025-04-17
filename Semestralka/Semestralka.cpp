@@ -6,7 +6,7 @@ static void showMenu() {
     std::cout << "1. Filter by lifetime" << '\n';
 	std::cout << "2. Filter by nexthop address" << '\n';
 	std::cout << "3. Filter by matching with prefix address" << '\n';
-	std::cout << "5. Exit the part" << '\n';
+	std::cout << "0. Exit" << '\n';
 	std::cout << "Enter your choice: ";
 }
 
@@ -14,7 +14,7 @@ static void showParts() {
     std::cout << "\n";	
     std::cout << "1. Vector" << '\n';
 	std::cout << "2. MWHierarchy"<< '\n';
-	std::cout << "3. Exit the program" << '\n';
+	std::cout << "0. Exit" << '\n';
 	std::cout << "Enter your choice: ";
 }
 
@@ -22,7 +22,7 @@ static void showMovementOptions() {
     std::cout << "\n";
 	std::cout << "1. To parent" << "\n";
 	std::cout << "2. To son" << "\n";
-	std::cout << "3. Start filtering" << "\n";
+	std::cout << "3. Filter" << "\n";
 	std::cout << "Enter your choice: ";
 }
 
@@ -162,7 +162,7 @@ int main() {
                     printFiltered(filtered);
                     break;
 
-                case 5:
+                case 0:
                     std::cout << "Are you sure you want to exit? (y/n): ";
                     std::cin >> confirmation;
                     if (confirmation == "y" || confirmation == "Y") {
@@ -282,7 +282,7 @@ int main() {
                     printFiltered(filtered);
                     break;
 
-                case 5:
+                case 0:
                     std::cout << "Are you sure you want to exit? (y/n): ";
                     std::cin >> confirmation;
                     if (confirmation == "y" || confirmation == "Y") {
@@ -301,7 +301,7 @@ int main() {
                 }
             }
             break;
-        case 3:
+        case 0:
             std::cout << "Are you sure you want to exit? (y/n): ";
             std::cin >> confirmation;
             if (confirmation == "y" || confirmation == "Y") {
