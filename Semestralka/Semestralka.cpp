@@ -2,25 +2,24 @@
 #include "Filter.h"
 #include "FilteringOptions.h"
 static void showMenu() {
-	std::cout << "======Menu======" << '\n';
-	std::cout << "1. Filter by lifetime" << '\n';
+    std::cout << "\n";	
+    std::cout << "1. Filter by lifetime" << '\n';
 	std::cout << "2. Filter by nexthop address" << '\n';
 	std::cout << "3. Filter by matching with prefix address" << '\n';
-	std::cout << "4. Print filtered data structure" << '\n';
 	std::cout << "5. Exit the part" << '\n';
 	std::cout << "Enter your choice: ";
 }
 
 static void showParts() {
-	std::cout << "======Parts======" << "\n";
-	std::cout << "1. Part1 (simple vector)" << '\n';
-	std::cout << "2. Part2 (explicit hierarchy)" << '\n';
+    std::cout << "\n";	
+    std::cout << "1. Vector" << '\n';
+	std::cout << "2. MWHierarchy"<< '\n';
 	std::cout << "3. Exit the program" << '\n';
 	std::cout << "Enter your choice: ";
 }
 
 static void showMovementOptions() {
-	std::cout << "Chose where to move" << "\n";
+    std::cout << "\n";
 	std::cout << "1. To parent" << "\n";
 	std::cout << "2. To son" << "\n";
 	std::cout << "3. Start filtering" << "\n";
@@ -105,7 +104,7 @@ int main() {
                 switch (choice) {
                 case 1:
                     do {
-                        std::cout << "Enter minimum life time (example >> 1w4d3h or 6:25:20): ";
+                        std::cout << "Enter minimum life time: ";
                         std::cin >> userFromTime;
                         if (!options.isValidTime(userFromTime)) {
                             std::cout << "Invalid time format. Please try again.\n";
@@ -113,7 +112,7 @@ int main() {
                     } while (!options.isValidTime(userFromTime));
 
                     do {
-                        std::cout << "Enter maximum life time (example >> 1w4d3h or 6:25:20): ";
+                        std::cout << "Enter maximum life time: ";
                         std::cin >> userToTime;
                         if (!options.isValidTime(userToTime)) {
                             std::cout << "Invalid time format. Please try again.\n";
@@ -126,7 +125,7 @@ int main() {
 
                 case 2:
                     do {
-                        std::cout << "Enter a nexthop address (example >> 192.168.1.10): ";
+                        std::cout << "Enter a nexthop address: ";
                         std::cin >> userNextHop;
                         if (!options.isValidIP(userNextHop)) {
                             std::cout << "Invalid IP address. Please try again.\n";
@@ -139,7 +138,7 @@ int main() {
 
                 case 3:
                     do {
-                        std::cout << "Enter address you want to match (example >> 192.168.1.10): ";
+                        std::cout << "Enter address you want to match: ";
                         std::cin >> userAddress;
                         if (!options.isValidIP(userAddress)) {
                             std::cout << "Invalid IP address. Please try again.\n";
@@ -225,7 +224,7 @@ int main() {
                 switch (choice) {
                 case 1:
                     do {
-                        std::cout << "Enter minimum life time (example >> 1w4d3h or 6:25:20): ";
+                        std::cout << "Enter minimum life time: ";
                         std::cin >> userFromTime;
                         if (!options.isValidTime(userFromTime)) {
                             std::cout << "Invalid time format. Please try again.\n";
@@ -233,7 +232,7 @@ int main() {
                     } while (!options.isValidTime(userFromTime));
 
                     do {
-                        std::cout << "Enter maximum life time (example >> 1w4d3h or 6:25:20): ";
+                        std::cout << "Enter maximum life time: ";
                         std::cin >> userToTime;
                         if (!options.isValidTime(userToTime)) {
                             std::cout << "Invalid time format. Please try again.\n";
@@ -246,7 +245,7 @@ int main() {
 
                 case 2:
                     do {
-                        std::cout << "Enter a nexthop address (example >> 192.168.1.10): ";
+                        std::cout << "Enter a nexthop address: ";
                         std::cin >> userNextHop;
                         if (!options.isValidIP(userNextHop)) {
                             std::cout << "Invalid IP address. Please try again.\n";
@@ -259,7 +258,7 @@ int main() {
 
                 case 3:
                     do {
-                        std::cout << "Enter address you want to match (example >> 192.168.1.10): ";
+                        std::cout << "Enter address you want to match: ";
                         std::cin >> userAddress;
                         if (!options.isValidIP(userAddress)) {
                             std::cout << "Invalid IP address. Please try again.\n";

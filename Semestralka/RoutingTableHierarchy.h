@@ -14,7 +14,7 @@ public:
 
     inline void addRecord(RoutingRecord* record) { records.push_back(record); }
 	inline int getIp() { return ip; }
-	inline std::vector<RoutingRecord*> getRecords() { return records; }
+	inline std::vector<RoutingRecord*>& getRecords() { return records; }
 	inline bool operator==(const RoutingRecordNode& other) const { return ip == other.ip; }
 };
 
