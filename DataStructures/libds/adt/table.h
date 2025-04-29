@@ -357,9 +357,16 @@ namespace ds::adt {
     template<typename K, typename T, typename SequenceType>
     bool SequenceTable<K, T, SequenceType>::tryFind(const K& key, T*& data) const
     {
-        // TODO 10
-        // po implementacii vymazte vyhodenie vynimky!
-        throw std::runtime_error("Not implemented yet");
+        auto block = this->findBlockWithKey(key);
+        if (block == nullptr)
+        {
+            return false;
+        }
+
+        TableItem<K, T>& item = block->data_;
+        data = &item.data_;
+
+        return true;
     }
 
     template <typename K, typename T, typename SequenceType>
@@ -480,9 +487,8 @@ namespace ds::adt {
     template<typename K, typename T>
     bool SortedSequenceTable<K, T>::tryFindBlockWithKey(const K& key, size_t firstIndex, size_t lastIndex, BlockType*& lastBlock) const
     {
-        // TODO 10
-        // po implementacii vymazte vyhodenie vynimky!
         throw std::runtime_error("Not implemented yet");
+
     }
 
     //----------

@@ -1,5 +1,6 @@
 #pragma once
 #include "libds/amt/explicit_hierarchy.h"
+#include "libds/amt/implicit_sequence.h"
 #include <vector>
 #include "Parser.h"
 
@@ -7,14 +8,14 @@ class RoutingRecordNode
 {
 private:
 	int ip;
-	std::vector<RoutingRecord*> records;
+	ds::amt::ImplicitSequence<RoutingRecord*> records;
 public:
 	inline RoutingRecordNode() : ip(0) {}
 	inline RoutingRecordNode(int ip) : ip(ip) {}
 
-    inline void addRecord(RoutingRecord* record) { records.push_back(record); }
+    inline void addRecord(RoutingRecord* record) { records.insertLast().data_ = record; }
 	inline int getIp() { return ip; }
-	inline std::vector<RoutingRecord*>& getRecords() { return records; }
+	inline ds::amt::ImplicitSequence<RoutingRecord*>& getRecords() { return records; }
 	inline bool operator==(const RoutingRecordNode& other) const { return ip == other.ip; }
 };
 
