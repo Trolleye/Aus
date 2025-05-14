@@ -13,10 +13,20 @@ public:
 	inline RoutingRecordNode() : ip(0) {}
 	inline RoutingRecordNode(int ip) : ip(ip) {}
 
-    inline void addRecord(RoutingRecord* record) { records.insertLast().data_ = record; }
+    inline void addRecord(RoutingRecord* record) { records.insertFirst().data_ = record; }
 	inline int getIp() { return ip; }
 	inline ds::amt::ImplicitSequence<RoutingRecord*>& getRecords() { return records; }
 	inline bool operator==(const RoutingRecordNode& other) const { return ip == other.ip; }
+	inline RoutingRecordNode& operator=(const RoutingRecordNode& other) {
+        if (this != &other) {
+            this->ip = other.ip;
+            return *this;
+        }
+        else
+        {
+			return *this;
+        }
+    }
 };
 
 class RoutingTableHierarchy
@@ -28,8 +38,10 @@ public:
 	RoutingTableHierarchy();
 	void addFromVector(std::vector<RoutingRecord>& vector);
 	ds::amt::MultiWayExplicitHierarchyBlock<RoutingRecordNode>* addNode(int IP, ds::amt::MultiWayExplicitHierarchyBlock<RoutingRecordNode>& currentNode, int octet, RoutingRecord* record);
-	std::vector<int> getOctets(RoutingRecord& record);
+	ds::amt::ImplicitSequence<int> getOctets(RoutingRecord& record);
     ds::amt::MultiWayExplicitHierarchy<RoutingRecordNode>* getHierarchy();
+	std::string getSize() { return "Hierarchy size: " + std::to_string(this->hierarchy.size());
+    ; }
 };
 
 class RoutingTableHierarchyIterator : public ds::amt::MultiWayExplicitHierarchy<RoutingRecordNode>::PreOrderHierarchyIterator{
@@ -52,7 +64,7 @@ inline RoutingTableHierarchyIterator::RoutingTableHierarchyIterator(ds::amt::Mul
 
 inline auto RoutingTableHierarchyIterator::goToSon(int IP)
 {
-    for (decltype(auto) son : *this->currentPosition_->currentNode_->sons_)
+    for (auto& son : *this->currentPosition_->currentNode_->sons_)
     {
         if (!son) continue;
         if (son->data_.getIp() == IP) {
@@ -111,15 +123,15 @@ inline RoutingTableHierarchy::RoutingTableHierarchy()
 }
 
 
-inline std::vector<int> RoutingTableHierarchy::getOctets(RoutingRecord& record)
+inline ds::amt::ImplicitSequence<int> RoutingTableHierarchy::getOctets(RoutingRecord& record)
 {
-	std::vector<int> octets;
+	ds::amt::ImplicitSequence<int> octets;
 	std::string ip = record.getIPAddress();
 	std::stringstream ss(ip);
 	std::string octet;
 
 	while (std::getline(ss, octet, '.')) {
-		octets.push_back(std::stoi(octet));
+		octets.insertLast().data_ = (std::stoi(octet));
 	}
 
 	return octets;
@@ -133,8 +145,8 @@ inline ds::amt::MultiWayExplicitHierarchy<RoutingRecordNode>* RoutingTableHierar
 inline void RoutingTableHierarchy::addFromVector(std::vector<RoutingRecord>& vector)
 {
     for (RoutingRecord& record : vector) {
-        std::vector<int> octetsIP = this->getOctets(record);
-        decltype(auto) currentNode = hierarchy.accessRoot();
+        ds::amt::ImplicitSequence<int> octetsIP = this->getOctets(record);
+        auto currentNode = hierarchy.accessRoot();
 
         if (!currentNode) {
             std::cerr << "Error: Root node is null!" << std::endl;
@@ -142,7 +154,7 @@ inline void RoutingTableHierarchy::addFromVector(std::vector<RoutingRecord>& vec
         }
 
         for (int i = 0; i < 4; i++) {
-            int IP = octetsIP[i];
+            int IP = octetsIP.access(i)->data_;
             bool found = false;
 
             if (!currentNode->sons_) {
@@ -150,7 +162,7 @@ inline void RoutingTableHierarchy::addFromVector(std::vector<RoutingRecord>& vec
                 continue;
             }
 
-            for (decltype(auto) son : *currentNode->sons_) {
+            for (auto& son : *currentNode->sons_) {
                 if (!son) continue;
                 if (son->data_.getIp() == IP) {
                     currentNode = son;
@@ -168,7 +180,6 @@ inline void RoutingTableHierarchy::addFromVector(std::vector<RoutingRecord>& vec
             }
         }
     }
-    std::cout << "Hierarchy size: " << this->hierarchy.size() << std::endl;
 }
 
 
@@ -176,7 +187,7 @@ inline void RoutingTableHierarchy::addFromVector(std::vector<RoutingRecord>& vec
 
 inline ds::amt::MultiWayExplicitHierarchyBlock<RoutingRecordNode>* RoutingTableHierarchy::addNode(int IP, ds::amt::MultiWayExplicitHierarchyBlock<RoutingRecordNode>& currentNode, int octet, RoutingRecord* record)
 {
-    decltype(auto) sonNode = this->hierarchy.emplaceSon(currentNode, currentNode.sons_->size());
+    auto& sonNode = this->hierarchy.emplaceSon(currentNode, currentNode.sons_->size());
     sonNode.data_ = RoutingRecordNode(IP);
     if (record != nullptr) {
         sonNode.data_.addRecord(record);

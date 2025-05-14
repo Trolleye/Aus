@@ -20,6 +20,7 @@ public:
 	bool matchNextHop(std::string& paNextHop);
 	std::string getInfo();
 	std::string getIPAddress();
+	std::string getNextHop() { return this->nextHop; }
 	RoutingRecord();
 	RoutingRecord(std::string lifeTime, std::string prefixAddress, std::string prefixMask, std::string nextHop);
 };
