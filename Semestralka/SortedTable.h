@@ -51,10 +51,14 @@ inline void SortedTable::findRecords(std::string& key)
 	ds::amt::ImplicitSequence<RoutingRecord*>** recordData = nullptr;
 	if (this->records.tryFind(key, recordData))
 	{
+		int size = 0;
 		for (auto& record : **recordData)
 		{
 			std::cout << record->getInfo() << std::endl;
+			size++;
 		}
+		std::cout << "Table size: " << size << std::endl;
+
 	}
 	else
 	{

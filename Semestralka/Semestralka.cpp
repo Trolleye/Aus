@@ -259,6 +259,7 @@ int main() {
               std::cout << "Enter nextHop address to search: ";
               std::cin >> userNextHop;
               sortedTable.findRecords(userNextHop);
+              
               break;
           }
 
