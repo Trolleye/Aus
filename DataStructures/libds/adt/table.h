@@ -874,8 +874,8 @@ namespace ds::adt {
         return dynamic_cast<amt::BinaryEH<ItemType>*>(this->memoryStructure_);
     }
 
-    template<typename K, typename T, typename ItemType>
-    void GeneralBinarySearchTree<K, T, ItemType>::removeNode(BSTNodeType* node)
+    template<typename K, typename T, typename BlockType>
+    void GeneralBinarySearchTree<K, T, BlockType>::removeNode(BSTNodeType* node)
     {
         BSTNodeType* parent = this->getHierarchy()->accessParent(*node);
         BSTNodeType* son;
@@ -975,8 +975,9 @@ namespace ds::adt {
         return node->data_.key_ == key;
     }
 
-    template<typename K, typename T, typename ItemType>
-    void GeneralBinarySearchTree<K, T, ItemType>::rotateLeft(BSTNodeType* node)
+
+    template<typename K, typename T, typename BlockType>
+    void GeneralBinarySearchTree<K, T, BlockType>::rotateLeft(BSTNodeType* node)
     {
         BSTNodeType* leftSon = this->getHierarchy()->accessLeftSon(*node);
         BSTNodeType* parent = this->getHierarchy()->accessParent(*node);
@@ -985,16 +986,20 @@ namespace ds::adt {
         this->getHierarchy()->changeRightSon(*parent, nullptr);
         this->getHierarchy()->changeLeftSon(*node, nullptr);
 
-        if (parentOfParent != nullptr) {
-            if (this->getHierarchy()->accessLeftSon(*parentOfParent) == parent) {
+        if (parentOfParent != nullptr) 
+        {
+            if (this->getHierarchy()->accessLeftSon(*parentOfParent) == parent) 
+            {
                 this->getHierarchy()->changeLeftSon(*parentOfParent, node);
             }
-            else {
+            else 
+            {
                 this->getHierarchy()->changeRightSon(*parentOfParent, node);
             }
         }
 
-        else {
+        else 
+        {
             this->getHierarchy()->changeRoot(node);
         }
 
@@ -1002,31 +1007,33 @@ namespace ds::adt {
         this->getHierarchy()->changeLeftSon(*node, parent);
     }
 
-    template<typename K, typename T, typename ItemType>
-    void GeneralBinarySearchTree<K, T, ItemType>::rotateRight(BSTNodeType* node)
+    template<typename K, typename T, typename BlockType>
+    void GeneralBinarySearchTree<K, T, BlockType>::rotateRight(BSTNodeType* node)
     {
         BSTNodeType* rightSon = this->getHierarchy()->accessRightSon(*node);
         BSTNodeType* parent = this->getHierarchy()->accessParent(*node);
         BSTNodeType* parentOfParent = this->getHierarchy()->accessParent(*parent);
 
-        this->getHierarchy()->changeRightSon(*parent, nullptr);
-        this->getHierarchy()->changeLeftSon(*node, nullptr);
+        this->getHierarchy()->changeLeftSon(*parent, nullptr);
+        this->getHierarchy()->changeRightSon(*node, nullptr);
 
-        if (parentOfParent != nullptr) {
-            if (this->getHierarchy()->accessLeftSon(*parentOfParent) == parent) {
+        if (parentOfParent != nullptr) 
+        {
+            if (this->getHierarchy()->accessLeftSon(*parentOfParent) == parent) 
+            {
                 this->getHierarchy()->changeLeftSon(*parentOfParent, node);
             }
-            else {
+            else 
+            {
                 this->getHierarchy()->changeRightSon(*parentOfParent, node);
             }
         }
-
-        else {
+        else 
+        {
             this->getHierarchy()->changeRoot(node);
         }
-
-        this->getHierarchy()->changeRightSon(*parent, rightSon);
-        this->getHierarchy()->changeLeftSon(*node, parent);
+        this->getHierarchy()->changeLeftSon(*parent, rightSon);
+        this->getHierarchy()->changeRightSon(*node, parent);
     }
 
     //----------
@@ -1034,29 +1041,26 @@ namespace ds::adt {
     template<typename K, typename T>
     bool BinarySearchTree<K, T>::equals(const ADT& other)
     {
-		return Table<K, T>::areEqual(*this, other);
+        return Table<K, T>::areEqual(*this, other);
     }
 
     //----------
-
     template<typename K, typename T>
     Treap<K, T>::Treap() :
-        rng_(std::random_device()())
-    {
+        rng_(std::random_device()()) {
     }
 
     template<typename K, typename T>
-    void Treap<K, T>::removeNode(BSTNodeType* node)
-    {
-		node->data_.priority_ = this->rng_.min();
+    void Treap<K, T>::removeNode(BSTNodeType* node) {
+        node->data_.priority_ = rng_.min();
         while (this->getHierarchy()->degree(*node) == 2) {
-            auto& leftSon = node->left_;
-            auto& rightSon = node->right_;
-            if (leftSon->data_.priority_ < rightSon->data_.priority_)
+            BSTNodeType* leftSon = this->getHierarchy()->accessLeftSon(*node);
+            BSTNodeType* rightSon = this->getHierarchy()->accessRightSon(*node);
+            if (leftSon->data_.priority_ < rightSon->data_.priority_) 
             {
                 this->rotateRight(leftSon);
             }
-            else
+            else 
             {
                 this->rotateLeft(rightSon);
             }
@@ -1065,26 +1069,26 @@ namespace ds::adt {
     }
 
     template<typename K, typename T>
-    void Treap<K, T>::balanceTree(BSTNodeType* node)
-    {
+    void Treap<K, T>::balanceTree(BSTNodeType* node) {
         node->data_.priority_ = this->rng_();
         BSTNodeType* parent = this->getHierarchy()->accessParent(*node);
-        while (parent != nullptr && parent->data_.priority_ > node->data_.priority_) {
-            if (parent->left_ == node)
+        while (parent != nullptr && parent->data_.priority_ > node->data_.priority_) 
+        {
+            if (this->getHierarchy()->accessLeftSon(*parent) == node) 
             {
                 this->rotateRight(node);
             }
-            else
+            else 
             {
                 this->rotateLeft(node);
             }
             parent = this->getHierarchy()->accessParent(*node);
         }
+
     }
 
     template<typename K, typename T>
-    bool Treap<K, T>::equals(const ADT& other)
-    {
+    bool Treap<K, T>::equals(const ADT& other) {
         return Table<K, T>::areEqual(*this, other);
     }
 }
