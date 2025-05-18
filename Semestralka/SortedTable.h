@@ -11,7 +11,7 @@ public:
 	inline void findRecords(std::string& key);
 	inline std::string getSize() { return "Sorted Table size: " + std::to_string(this->records.size()); };
 private:
-	ds::adt::SortedSequenceTable<std::string, ds::amt::ImplicitSequence<RoutingRecord*>*> records;
+	ds::adt::Treap<std::string, ds::amt::ImplicitSequence<RoutingRecord*>*> records;
 };
 
 inline SortedTable::SortedTable(std::vector<RoutingRecord>& vectorRecords)
