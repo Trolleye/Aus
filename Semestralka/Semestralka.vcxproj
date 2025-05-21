@@ -143,6 +143,7 @@
     <ClInclude Include="Parser.h" />
     <ClInclude Include="RoutingRecord.h" />
     <ClInclude Include="SortedTable.h" />
+    <ClInclude Include="VectorQuickSort.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

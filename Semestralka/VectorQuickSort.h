@@ -6,31 +6,31 @@ public:
     template<typename T, typename comparator>
     static void sort(std::vector<T>& vector, comparator compare)
     {
-        if (!vector.isEmpty())
+        if (!vector.empty())
         {
             quick(vector, compare, 0, vector.size() - 1);
         }
     }
 
     template<typename T, typename comparator>
-    void quick(std::vector<T>& vector, comparator compare, size_t min, size_t max)
+    static void quick(std::vector<T>& vector, comparator compare, size_t min, size_t max)
     {
-        T pivot = vector.access(min + (max - min) / 2)->data_;
+        T pivot = vector[min + (max - min) / 2];
         int left = min;
         int right = max;
         do
         {
-            while (compare(vector.access(left)->data_, pivot))
+            while (compare(vector[left], pivot))
             {
                 ++left;
             }
-            while (right > 0 && compare(pivot, vector.access(right)->data_))
+            while (right > 0 && compare(pivot, vector[right]))
             {
                 --right;
             }
             if (left <= right)
             {
-                std::swap(vector.access(left)->data_, vector.access(right)->data_);
+                std::swap(vector[left], vector[right]);
                 ++left;
                 if (right > 0)
                 {
@@ -41,11 +41,11 @@ public:
 
         if (min < right)
         {
-            quick(vector, compare, min, right);
+            VectorQuickSort::quick(vector, compare, min, right);
         }
         if (left < max)
         {
-            quick(vector, compare, left, max);
+            VectorQuickSort::quick(vector, compare, left, max);
         }
     }
 

@@ -31,44 +31,10 @@ static void showMovementOptions() {
 }
 
 bool compareIP(RoutingRecord& record1, RoutingRecord& record2) {
-    if (record1.getIP() != record2.getIP())
-    {
+    if (record1.getIP() != record2.getIP()) {
         return record1.getIP() < record2.getIP();
     }
     return record1.getMask() < record2.getMask();
-}
-
-static void promptSort(std::vector<RoutingRecord*>& filteredVector) {
-    std::string confirmation;
-    std::cout << "Do you want to filter these results? (y/n): ";
-    std::cin >> confirmation;
-
-    if (confirmation == "Y" || confirmation == "y") {
-        int choice;
-        std::cout << "Choose filter option:\n"
-            << "1. Filter by lifetime\n"
-            << "2. Filter by IP prefix\n"
-            << "Enter your choice: ";
-        std::cin >> choice;
-
-        if (choice == 1) {
-            auto compareTime = [](RoutingRecord* record1, RoutingRecord* record2) 
-            {
-                return record1->getLifeTime() < record2->getLifeTime();
-            };
-            VectorQuickSort::sort(filteredVector, compareTime);
-        }
-        else if (choice == 2) {
-            auto comparePrefix = [](RoutingRecord* record1, RoutingRecord* record2) 
-            {
-                return compareIP(*record1, *record2);
-            };
-            VectorQuickSort::sort(filteredVector, comparePrefix);
-        }
-        else {
-            std::cout << "Invalid choice. No sorting applied.\n";
-        }
-    }
 }
 
 static void printFiltered(std::vector<RoutingRecord*>& filteredVector) {
@@ -101,25 +67,22 @@ int main() {
     FilteringOptions options = FilteringOptions();
     std::vector<RoutingRecord*> filtered = std::vector<RoutingRecord*>();
     RoutingTableHierarchy hierarchy = RoutingTableHierarchy();
-	SortedTable sortedTable = SortedTable(records);
+    SortedTable sortedTable = SortedTable(records);
     hierarchy.addFromVector(records);
-	std::cout << hierarchy.getSize() << std::endl << sortedTable.getSize() << std::endl;
+    std::cout << hierarchy.getSize() << std::endl << sortedTable.getSize() << std::endl;
     auto hierarchyCurrentNode = RoutingTableHierarchyIterator(hierarchy.getHierarchy()->accessRoot(), hierarchy.getHierarchy());
     auto hierarchyEnd = RoutingTableHierarchyIterator(nullptr, hierarchy.getHierarchy());
-    auto matchNextHopPred = [&](RoutingRecord* record) { return record->matchNextHop(userNextHop); };
-    auto matchWithAddressPred = [&](RoutingRecord* record) {return record->matchWithAddress(userAddress, userMask); };
-    auto matchLifetimePred = [&](RoutingRecord* record) {return record->matchLifeTime(userFromTime, userToTime); };
-    auto matchNextHopPredRef = [&](RoutingRecord& record) { return record.matchNextHop(userNextHop); };
-    auto matchWithAddressPredRef = [&](RoutingRecord& record) {return record.matchWithAddress(userAddress, userMask); };
-    auto matchLifetimePredRef = [&](RoutingRecord& record) {return record.matchLifeTime(userFromTime, userToTime); };
-    auto isLeaf = [&](RoutingRecordNode& record) { return !record.getRecords().isEmpty();};
-    auto pushToFiltered = [&](RoutingRecord* record) {
-        filtered.push_back(record);
-        };
 
-    auto pushToFilteredRef = [&](RoutingRecord& record) {
-        filtered.push_back(&record);
-        };
+    auto matchNextHopPred = [&](RoutingRecord* record) { return record->matchNextHop(userNextHop); };
+    auto matchWithAddressPred = [&](RoutingRecord* record) { return record->matchWithAddress(userAddress, userMask); };
+    auto matchLifetimePred = [&](RoutingRecord* record) { return record->matchLifeTime(userFromTime, userToTime); };
+    auto matchNextHopPredRef = [&](RoutingRecord& record) { return record.matchNextHop(userNextHop); };
+    auto matchWithAddressPredRef = [&](RoutingRecord& record) { return record.matchWithAddress(userAddress, userMask); };
+    auto matchLifetimePredRef = [&](RoutingRecord& record) { return record.matchLifeTime(userFromTime, userToTime); };
+    auto isLeaf = [&](RoutingRecordNode& record) { return !record.getRecords().isEmpty(); };
+
+    auto pushToFiltered = [&](RoutingRecord* record) { filtered.push_back(record); };
+    auto pushToFilteredRef = [&](RoutingRecord& record) { filtered.push_back(&record); };
 
     auto processLifetimePred = [&](RoutingRecordNode& node) {
         Filter::filter(node.getRecords().begin(), node.getRecords().end(), matchLifetimePred, pushToFiltered);
@@ -133,8 +96,6 @@ int main() {
 
     int choice, octetValue, part;
     std::string confirmation;
-    void handleInvalidInput();
-    bool confirmExit();
 
     while (true) {
         showParts();
@@ -257,11 +218,6 @@ int main() {
                     }
                     break;
 
-                case 4:
-                    std::cout << "Current filtered results (" << filtered.size() << " records):" << '\n';
-                    printFiltered(filtered);
-                    break;
-
                 case 0:
                     if (confirmExit()) {
                         inSubmenu = false;
@@ -275,55 +231,91 @@ int main() {
                 if (choice >= 1 && choice <= 3) {
                     printFiltered(filtered);
                     std::cout << "Filter applied. Current results: " << filtered.size() << " records." << '\n';
+
+                    if (!filtered.empty()) {
+                        std::cout << "Do you want to sort these results? (y/n): ";
+                        std::cin >> confirmation;
+
+                        if (confirmation == "Y" || confirmation == "y") {
+                            int sortChoice;
+                            std::cout << "Choose sort option:\n"
+                                << "1. Sort by lifetime\n"
+                                << "2. Sort by IP prefix\n"
+                                << "Enter your choice: ";
+                            std::cin >> sortChoice;
+
+                            if (sortChoice == 1) {
+                                auto compareTime = [](RoutingRecord* record1, RoutingRecord* record2) {
+                                    return record1->getLifeTime() < record2->getLifeTime();
+                                    };
+                                VectorQuickSort::sort(filtered, compareTime);
+                            }
+                            else if (sortChoice == 2) {
+                                auto comparePrefix = [](RoutingRecord* record1, RoutingRecord* record2) {
+                                    return compareIP(*record1, *record2);
+                                    };
+                                VectorQuickSort::sort(filtered, comparePrefix);
+                            }
+                            else {
+                                std::cout << "Invalid choice. No sorting applied.\n";
+                            }
+
+                            std::cout << "Sorted results:\n";
+                            printFiltered(filtered);
+                        }
+                    }
+
                     filtered.clear();
                 }
             }
             break;
         }
-  case 3: {
-      bool inSubmenu = true;
-      while (inSubmenu) {
-          showMenu();
-          std::cin >> choice;
 
-          if (std::cin.fail()) {
-              handleInvalidInput();
-              continue;
-          }
+        case 3: {
+            bool inSubmenu = true;
+            while (inSubmenu) {
+                showMenu();
+                std::cin >> choice;
 
-          switch (choice) {
-          case 1:
-          case 3:
-              std::cout << "This option is not available for SortedTable.\n";
-              break;
+                if (std::cin.fail()) {
+                    handleInvalidInput();
+                    continue;
+                }
 
-          case 2: {
-              std::cout << "Enter nextHop address to search: ";
-              std::cin >> userNextHop;
-              sortedTable.findRecords(userNextHop);
-              
-              break;
-          }
+                switch (choice) {
+                case 1:
+                case 3:
+                    std::cout << "This option is not available for SortedTable.\n";
+                    break;
 
-          case 0:
-              if (confirmExit()) {
-                  inSubmenu = false;
-              }
-              break;
+                case 2: {
+                    std::cout << "Enter nextHop address to search: ";
+                    std::cin >> userNextHop;
+                    sortedTable.findRecords(userNextHop);
+                    break;
+                }
 
-          default:
-              std::cout << "Invalid choice. Try again.\n";
-          }
-      }
-      break;
-  }
-  case 0:
-      if (confirmExit()) {
-          return 0;
-      }
-      break;
-  default:
-      std::cout << "Invalid choice. Try again.\n";
+                case 0:
+                    if (confirmExit()) {
+                        inSubmenu = false;
+                    }
+                    break;
+
+                default:
+                    std::cout << "Invalid choice. Try again.\n";
+                }
+            }
+            break;
+        }
+
+        case 0:
+            if (confirmExit()) {
+                return 0;
+            }
+            break;
+
+        default:
+            std::cout << "Invalid choice. Try again.\n";
         }
     }
 }
