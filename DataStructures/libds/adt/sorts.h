@@ -116,9 +116,9 @@ namespace ds::adt
         void merge(std::function<bool(const T&, const T&)> compare, size_t n);
 
     private:
-        ImplicitQueue<T>* queue1_ {nullptr};
-        ImplicitQueue<T>* queue2_ {nullptr};
-        ImplicitQueue<T>* mergeQueue_ {nullptr};
+        ImplicitQueue<T>* queue1_{ nullptr };
+        ImplicitQueue<T>* queue2_{ nullptr };
+        ImplicitQueue<T>* mergeQueue_{ nullptr };
     };
 
     //----------
@@ -136,24 +136,44 @@ namespace ds::adt
                     min = j;
                 }
             }
-            std::swap(is.access(i)->data_, is.access(min)->data_);
+            using std::swap;
+            swap(is.access(i)->data_, is.access(min)->data_);
         }
     }
 
     template<typename T>
     void InsertSort<T>::sort(amt::ImplicitSequence<T>& is, std::function<bool(const T&, const T&)> compare)
     {
-        // TODO 12
-        // po implementacii vymazte vyhodenie vynimky!
-        throw std::runtime_error("Not implemented yet");
+        for (size_t i = 1; i < is.size(); ++i)
+        {
+            T tmp = is.access(i)->data_;
+            size_t j = i;
+            while (j > 0 && compare(tmp, is.access(j - 1)->data_))
+            {
+                is.access(j)->data_ = is.access(j - 1)->data_;
+                --j;
+            }
+            is.access(j)->data_ = tmp;
+        }
     }
 
     template<typename T>
     void BubbleSort<T>::sort(amt::ImplicitSequence<T>& is, std::function<bool(const T&, const T&)> compare)
     {
-        // TODO 12
-        // po implementacii vymazte vyhodenie vynimky!
-        throw std::runtime_error("Not implemented yet");
+        bool swapped;
+        do
+        {
+            swapped = false;
+            for (size_t i = 0; i < is.size() - 1; ++i)
+            {
+                if (compare(is.access(i + 1)->data_, is.access(i)->data_))
+                {
+                    using std::swap;
+                    swap(is.access(i + 1)->data_, is.access(i)->data_);
+                    swapped = true;
+                }
+            }
+        } while (swapped);
     }
 
     template<typename T>
@@ -168,9 +188,38 @@ namespace ds::adt
     template<typename T>
     void QuickSort<T>::quick(amt::ImplicitSequence<T>& is, std::function<bool(const T&, const T&)> compare, size_t min, size_t max)
     {
-        // TODO 12
-        // po implementacii vymazte vyhodenie vynimky!
-        throw std::runtime_error("Not implemented yet");
+        T pivot = is.access(min + (max - min) / 2)->data_;
+        int left = min;
+        int right = max;
+        do
+        {
+            while (compare(is.access(left)->data_, pivot))
+            {
+                ++left;
+            }
+            while (right > 0 && compare(pivot, is.access(right)->data_))
+            {
+                --right;
+            }
+            if (left <= right)
+            {
+                std::swap(is.access(left)->data_, is.access(right)->data_);
+                ++left;
+                if (right > 0)
+                {
+                    --right;
+                }
+            }
+        } while (left <= right);
+
+        if (min < right)
+        {
+            quick(is, compare, min, right);
+        }
+        if (left < max)
+        {
+            quick(is, compare, left, max);
+        }
     }
 
     template<typename T>

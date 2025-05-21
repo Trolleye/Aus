@@ -2,6 +2,7 @@
 #include "Filter.h"
 #include "FilteringOptions.h"
 #include "SortedTable.h"
+#include "VectorQuickSort.h"
 
 static void showMenu() {
     std::cout << "\n";
@@ -27,6 +28,47 @@ static void showMovementOptions() {
     std::cout << "2. To son" << "\n";
     std::cout << "3. Filter" << "\n";
     std::cout << "Enter your choice: ";
+}
+
+bool compareIP(RoutingRecord& record1, RoutingRecord& record2) {
+    if (record1.getIP() != record2.getIP())
+    {
+        return record1.getIP() < record2.getIP();
+    }
+    return record1.getMask() < record2.getMask();
+}
+
+static void promptSort(std::vector<RoutingRecord*>& filteredVector) {
+    std::string confirmation;
+    std::cout << "Do you want to filter these results? (y/n): ";
+    std::cin >> confirmation;
+
+    if (confirmation == "Y" || confirmation == "y") {
+        int choice;
+        std::cout << "Choose filter option:\n"
+            << "1. Filter by lifetime\n"
+            << "2. Filter by IP prefix\n"
+            << "Enter your choice: ";
+        std::cin >> choice;
+
+        if (choice == 1) {
+            auto compareTime = [](RoutingRecord* record1, RoutingRecord* record2) 
+            {
+                return record1->getLifeTime() < record2->getLifeTime();
+            };
+            VectorQuickSort::sort(filteredVector, compareTime);
+        }
+        else if (choice == 2) {
+            auto comparePrefix = [](RoutingRecord* record1, RoutingRecord* record2) 
+            {
+                return compareIP(*record1, *record2);
+            };
+            VectorQuickSort::sort(filteredVector, comparePrefix);
+        }
+        else {
+            std::cout << "Invalid choice. No sorting applied.\n";
+        }
+    }
 }
 
 static void printFiltered(std::vector<RoutingRecord*>& filteredVector) {
