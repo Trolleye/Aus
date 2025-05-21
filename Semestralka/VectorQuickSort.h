@@ -16,8 +16,8 @@ public:
     static void quick(std::vector<T>& vector, comparator compare, size_t min, size_t max)
     {
         T pivot = vector[min + (max - min) / 2];
-        int left = min;
-        int right = max;
+        size_t left = min;
+        size_t right = max;
         do
         {
             while (compare(vector[left], pivot))

@@ -189,8 +189,8 @@ namespace ds::adt
     void QuickSort<T>::quick(amt::ImplicitSequence<T>& is, std::function<bool(const T&, const T&)> compare, size_t min, size_t max)
     {
         T pivot = is.access(min + (max - min) / 2)->data_;
-        int left = min;
-        int right = max;
+        size_t left = min;
+        size_t right = max;
         do
         {
             while (compare(is.access(left)->data_, pivot))
