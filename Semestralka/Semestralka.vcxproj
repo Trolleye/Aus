@@ -135,6 +135,7 @@
     <ClCompile Include="Semestralka.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="RT.csv" />
   </ItemGroup>
   <ItemGroup>
