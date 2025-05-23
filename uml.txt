@@ -1,0 +1,103 @@
+@startuml
+
+class RoutingRecord {
+  - lifeTime: string
+  - prefixAddress: string
+  - prefixMask: string
+  - nextHop: string
+  - lifeTimeSec: int
+  - prefixMaskInt: int
+  + matchWithAddress(paAddress: string, paMask: int): bool
+  + matchLifeTime(fromTime: string, toTime: string): bool
+  + matchNextHop(paNextHop: string): bool
+  + getMask(): int
+  + getIP(): uint32_t
+  + getLifeTime(): int
+  + getInfo(): string
+  + getIPAddress(): string
+  + getNextHop(): string
+  + RoutingRecord()
+  + RoutingRecord(lifeTime: string, prefixAddress: string, prefixMask: string, nextHop: string)
+  - toSec(paLifeTime: string&): int
+  - toBinary(paAddress: const string&): array<int, 32>
+}
+
+class RoutingRecordNode {
+  - ip: int
+  - records: ImplicitSequence<RoutingRecord*>
+  + RoutingRecordNode()
+  + RoutingRecordNode(ip: int)
+  + addRecord(record: RoutingRecord*): void
+  + getIp(): int
+  + getRecords(): ImplicitSequence<RoutingRecord*>&
+  + operator==(other: const RoutingRecordNode&): bool
+  + operator=(other: const RoutingRecordNode&): RoutingRecordNode&
+}
+
+class RoutingTableHierarchy {
+  - hierarchy: MultiWayExplicitHierarchy<RoutingRecordNode>
+  - userCurrentNode: MultiWayExplicitHierarchyBlock<RoutingRecordNode>*
+  + RoutingTableHierarchy()
+  + addFromVector(vector: vector<RoutingRecord>&): void
+  + addNode(IP: int, currentNode: MultiWayExplicitHierarchyBlock<RoutingRecordNode>&, octet: int, record: RoutingRecord*): MultiWayExplicitHierarchyBlock<RoutingRecordNode>*
+  + getOctets(record: RoutingRecord&): ImplicitSequence<int>
+  + getHierarchy(): MultiWayExplicitHierarchy<RoutingRecordNode>*
+  + getSize(): string
+}
+
+class RoutingTableHierarchyIterator {
+  - currentUserOctet: int
+  + RoutingTableHierarchyIterator(userCurrentNode: MultiWayExplicitHierarchyBlock<RoutingRecordNode>*, hierarchy: MultiWayExplicitHierarchy<RoutingRecordNode>*)
+  + goToSon(IP: int): void
+  + goToParent(): void
+  + printRecords(): void
+}
+
+class SortedTable {
+  - records: Treap<string, ImplicitSequence<RoutingRecord*>*>
+  + SortedTable(vectorRecords: vector<RoutingRecord>&)
+  + ~SortedTable()
+  + addRecords(vectorRecords: vector<RoutingRecord>&): void
+  + findRecords(key: string&): void
+  + getSize(): string
+}
+
+class Filter {
+  + filter(begin: structure, end: structure, p: pred, op: oper): static void
+}
+
+class FilteringOptions {
+  - userChoice: int
+  - userMask: int
+  - nextHop: string
+  - address: string
+  - fromTime: string
+  - toTime: string
+  + FilteringOptions()
+  + FilteringOptions(userChoice: int, userMask: int, nextHop: const string&, address: const string&, fromTime: const string&, toTime: const string&)
+  + isValidIP(ip: const string&): bool
+  + isValidTime(time: const string&): bool
+  + getter/setter methods...
+}
+
+class Parser {
+  + parseCSV(filename: const string&): static vector<RoutingRecord>
+  - parseLine(line: const string&): static RoutingRecord
+}
+
+class VectorQuickSort {
+  + sort(vector: vector<T>&, compare: comparator): static void
+  - quick(vector: vector<T>&, compare: comparator, min: size_t, max: size_t): static void
+}
+
+' Relationships
+RoutingRecordNode "1" *-- "0..*" RoutingRecord : contains
+class MultiWayExplicitHierarchy
+RoutingTableHierarchy "1" *-- "1" MultiWayExplicitHierarchy : contains
+RoutingTableHierarchyIterator --> RoutingTableHierarchy : navigates
+SortedTable "1" *-- "0..*" RoutingRecord : references
+Parser --> RoutingRecord : creates
+Filter --> RoutingRecord : operates on
+FilteringOptions --> RoutingRecord : validates
+
+@enduml
